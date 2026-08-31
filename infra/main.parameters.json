@@ -1,0 +1,13 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": { "value": "acajobs" },
+    "acrName": { "value": "REPLACE_WITH_ACR_NAME" },
+    "imageTag": { "value": "latest" },
+    "sqlAdminLogin": { "value": "jobsadmin" },
+    "sqlAdminPassword": { "value": "REPLACE_WITH_STRONG_PASSWORD" },
+    "aadAdminLogin": { "value": "REPLACE_WITH_YOUR_UPN_OR_GROUP" },
+    "aadAdminObjectId": { "value": "REPLACE_WITH_YOUR_OBJECT_ID" }
+  }
+}

@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Dashboard.Web/Dashboard.Web.csproj" />
+    <Project Path="src/Jobs.Shared/Jobs.Shared.csproj" />
+    <Project Path="src/Producer.Api/Producer.Api.csproj" />
+    <Project Path="src/Worker.EventJob/Worker.EventJob.csproj" />
+    <Project Path="src/Worker.ManualJob/Worker.ManualJob.csproj" />
+    <Project Path="src/Worker.ScheduledJob/Worker.ScheduledJob.csproj" />
+  </Folder>
+</Solution>

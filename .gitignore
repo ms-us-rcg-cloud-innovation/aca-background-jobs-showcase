@@ -1,0 +1,27 @@
+# .NET build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+
+# Rider / VS
+.idea/
+.vs/
+
+# azd
+.azure/
+
+# Local secrets / env
+*.env
+appsettings.*.local.json
+secrets.json
+
+# Bicep compiled output
+infra/*.json
+!infra/main.parameters.json
+
+# OS
+.DS_Store
+Thumbs.db
