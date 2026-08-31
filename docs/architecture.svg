@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#5b6472"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#0f6cbd"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L9,3 L0,6 Z" fill="#c4314b"/>
+    </marker>
+    <style>
+      .title { font-size: 22px; font-weight: 700; fill: #1b1b1b; }
+      .sub { font-size: 13px; fill: #5b6472; }
+      .box { fill: #ffffff; stroke: #c8ccd4; stroke-width: 1.5; rx: 10; }
+      .env { fill: #eef4fb; stroke: #0f6cbd; stroke-width: 1.5; stroke-dasharray: 6 4; }
+      .svc { font-size: 14px; font-weight: 600; fill: #1b1b1b; }
+      .svcsub { font-size: 11.5px; fill: #5b6472; }
+      .tag { font-size: 11px; fill: #0f6cbd; font-weight: 600; }
+      .edge { stroke: #5b6472; stroke-width: 1.6; fill: none; }
+      .edgeBlue { stroke: #0f6cbd; stroke-width: 1.8; fill: none; }
+      .edgeRed { stroke: #c4314b; stroke-width: 1.6; fill: none; stroke-dasharray: 5 4; }
+      .elabel { font-size: 11px; fill: #3b4250; }
+      .idbadge { fill: #f3f0ff; stroke: #7a52c7; stroke-width: 1.3; }
+      .idtext { font-size: 11.5px; fill: #5b3fa6; font-weight: 600; }
+    </style>
+  </defs>
+
+  <text x="30" y="40" class="title">Azure Container Apps — Background Jobs Showcase</text>
+  <text x="30" y="60" class="sub">Hangfire-style background processing on Azure-native services (no Hangfire). All data-plane auth is passwordless via managed identity.</text>
+
+  <!-- Caller -->
+  <rect x="30" y="250" width="120" height="70" class="box" rx="10"/>
+  <text x="90" y="280" text-anchor="middle" class="svc">Caller</text>
+  <text x="90" y="300" text-anchor="middle" class="svcsub">user / pipeline</text>
+
+  <!-- Container Apps Environment boundary -->
+  <rect x="185" y="95" width="640" height="470" class="env" rx="14"/>
+  <text x="205" y="120" class="tag">Container Apps Environment</text>
+
+  <!-- Producer API -->
+  <rect x="210" y="150" width="180" height="80" class="box" rx="10"/>
+  <text x="300" y="178" text-anchor="middle" class="svc">Producer API</text>
+  <text x="300" y="197" text-anchor="middle" class="svcsub">Container App (HTTP)</text>
+  <text x="300" y="213" text-anchor="middle" class="svcsub">enqueue / schedule</text>
+
+  <!-- Dashboard -->
+  <rect x="210" y="410" width="180" height="80" class="box" rx="10"/>
+  <text x="300" y="438" text-anchor="middle" class="svc">Dashboard</text>
+  <text x="300" y="457" text-anchor="middle" class="svcsub">Container App (HTTP)</text>
+  <text x="300" y="473" text-anchor="middle" class="svcsub">live job monitor</text>
+
+  <!-- Jobs -->
+  <rect x="600" y="140" width="200" height="66" class="box" rx="10"/>
+  <text x="700" y="165" text-anchor="middle" class="svc">event-worker</text>
+  <text x="700" y="184" text-anchor="middle" class="svcsub">ACA Job · Event (KEDA)</text>
+  <text x="700" y="198" text-anchor="middle" class="svcsub">fire-and-forget + delayed</text>
+
+  <rect x="600" y="220" width="200" height="66" class="box" rx="10"/>
+  <text x="700" y="245" text-anchor="middle" class="svc">scheduled-worker</text>
+  <text x="700" y="264" text-anchor="middle" class="svcsub">ACA Job · CRON</text>
+  <text x="700" y="278" text-anchor="middle" class="svcsub">recurring + fan-out</text>
+
+  <rect x="600" y="300" width="200" height="66" class="box" rx="10"/>
+  <text x="700" y="325" text-anchor="middle" class="svc">manual-worker</text>
+  <text x="700" y="344" text-anchor="middle" class="svcsub">ACA Job · Manual</text>
+  <text x="700" y="358" text-anchor="middle" class="svcsub">on-demand batch</text>
+
+  <!-- Service Bus -->
+  <rect x="880" y="150" width="210" height="90" class="box" rx="10"/>
+  <text x="985" y="180" text-anchor="middle" class="svc">Azure Service Bus</text>
+  <text x="985" y="200" text-anchor="middle" class="svcsub">queue: jobs</text>
+  <text x="985" y="218" text-anchor="middle" class="svcsub">scheduled msgs · maxDelivery=5</text>
+
+  <!-- Dead-letter -->
+  <rect x="880" y="270" width="210" height="60" class="box" rx="10"/>
+  <text x="985" y="296" text-anchor="middle" class="svc">Dead-letter queue</text>
+  <text x="985" y="314" text-anchor="middle" class="svcsub">after 5 failed attempts</text>
+
+  <!-- Azure SQL -->
+  <rect x="880" y="410" width="210" height="80" class="box" rx="10"/>
+  <text x="985" y="438" text-anchor="middle" class="svc">Azure SQL</text>
+  <text x="985" y="457" text-anchor="middle" class="svcsub">db: jobs</text>
+  <text x="985" y="473" text-anchor="middle" class="svcsub">dbo.JobExecutions</text>
+
+  <!-- Managed identity badge -->
+  <rect x="600" y="410" width="200" height="80" class="idbadge" rx="10"/>
+  <text x="700" y="438" text-anchor="middle" class="idtext">User-assigned</text>
+  <text x="700" y="456" text-anchor="middle" class="idtext">Managed Identity</text>
+  <text x="700" y="474" text-anchor="middle" class="svcsub">SB · SQL · ACR (passwordless)</text>
+
+  <!-- Edges -->
+  <!-- caller -> producer -->
+  <path class="edge" d="M150,275 L205,215" marker-end="url(#arrow)"/>
+  <text x="150" y="238" class="elabel">POST /jobs</text>
+  <!-- caller -> dashboard -->
+  <path class="edge" d="M150,300 L205,440" marker-end="url(#arrow)"/>
+  <text x="150" y="380" class="elabel">browse</text>
+
+  <!-- producer -> service bus -->
+  <path class="edgeBlue" d="M390,175 C520,120 760,120 878,180" marker-end="url(#arrowBlue)"/>
+  <text x="560" y="120" class="elabel" fill="#0f6cbd">send / schedule message</text>
+  <!-- producer -> sql (insert enqueued) -->
+  <path class="edge" d="M390,205 C560,235 720,540 878,470" marker-end="url(#arrow)"/>
+  <text x="470" y="560" class="elabel">insert "Enqueued" row</text>
+
+  <!-- service bus -> event worker (KEDA) -->
+  <path class="edgeBlue" d="M880,190 C840,175 820,173 802,173" marker-end="url(#arrowBlue)"/>
+  <text x="806" y="140" class="elabel" fill="#0f6cbd">KEDA scale 0→N</text>
+
+  <!-- scheduled fan-out to queue -->
+  <path class="edgeBlue" d="M800,240 C850,250 860,220 878,205" marker-end="url(#arrowBlue)"/>
+
+  <!-- workers -> sql -->
+  <path class="edge" d="M800,180 C900,300 940,360 985,408" marker-end="url(#arrow)"/>
+  <path class="edge" d="M800,258 C880,320 940,360 984,408" marker-end="url(#arrow)"/>
+  <path class="edge" d="M800,340 C860,370 930,388 984,410" marker-end="url(#arrow)"/>
+  <text x="812" y="392" class="elabel">update status</text>
+
+  <!-- service bus -> DLQ -->
+  <path class="edgeRed" d="M985,240 L985,268" marker-end="url(#arrowRed)"/>
+
+  <!-- dashboard -> sql -->
+  <path class="edge" d="M390,455 C600,530 760,470 878,455" marker-end="url(#arrow)"/>
+  <text x="560" y="520" class="elabel">read executions</text>
+
+  <!-- identity dotted links -->
+  <path d="M700,410 L700,368" stroke="#7a52c7" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+  <path d="M800,450 L878,450" stroke="#7a52c7" stroke-width="1.2" stroke-dasharray="3 3" fill="none"/>
+
+  <!-- legend -->
+  <text x="30" y="600" class="sub">Legend:  blue = message flow / KEDA scaling   ·   grey = SQL state read/write   ·   red dashed = dead-letter   ·   purple = passwordless identity</text>
+</svg>

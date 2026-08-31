@@ -40,6 +40,11 @@ so you can see what the platform gives you out of the box.
 
 ## Architecture
 
+![Architecture diagram](docs/architecture.png)
+
+<details>
+<summary>Mermaid source (same diagram)</summary>
+
 ```mermaid
 flowchart LR
     subgraph Clients
@@ -64,6 +69,8 @@ flowchart LR
 
     Q -.->|after N failed attempts| DLQ[(Dead-letter queue)]
 ```
+
+</details>
 
 All compute runs in a single **Container Apps Environment**. Auth between
 components is **passwordless** via a user-assigned **managed identity**
