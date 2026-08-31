@@ -166,6 +166,12 @@ can be started on demand:
 az containerapp job start -n acajobs-scheduled-worker -g rg-acajobs
 ```
 
+The live dashboard after a demo run — note the failed job at **attempt 5**
+(retried then dead-lettered) and two different `event-worker` replicas (KEDA
+scaled out):
+
+![Live dashboard](docs/dashboard.png)
+
 ### API reference (Producer)
 
 | Method | Path | Purpose |
@@ -210,6 +216,32 @@ dotnet build AcaBackgroundJobs.slnx --no-restore
 ```
 
 Cloud image builds (`az acr build`) are unaffected — they restore from nuget.org inside Azure.
+
+---
+
+## Deploying in an MCAPS-governed subscription
+
+Microsoft-internal (MCAPS) subscriptions apply deny policies that affect this stack:
+
+- **Entra-only SQL auth is required.** The Bicep provisions Azure SQL with
+  `azureADOnlyAuthentication: true` (no SQL admin login/password) — passwordless
+  and policy-compliant by design.
+- **SQL region availability.** Azure SQL provisioning is restricted in some
+  regions for these subs (seen in `eastus`/`eastus2`). This showcase was
+  deployed successfully in **`swedencentral`**. If you hit
+  `ProvisioningDisabled`, pick another region.
+- **`SecurityControl=Ignore` tag.** Policies (Defender for Cloud) force
+  `publicNetworkAccess` **off** on SQL and revert firewall rules. Tag the
+  **resource group** with `SecurityControl=Ignore` to exempt it, which lets the
+  demo use public networking + firewall rules:
+  ```bash
+  az group update -n <rg> --set tags.SecurityControl=Ignore
+  ```
+  For production, prefer **private endpoints** instead of the tag exemption.
+- **Container Apps Jobs scale-rule identity.** The KEDA Service Bus scaler
+  authenticates with the managed identity. The Bicep pins the jobs to API
+  version `2024-10-02-preview`, which correctly persists the scale rule
+  `identity` (older versions silently drop it, so jobs never scale).
 
 ---
 

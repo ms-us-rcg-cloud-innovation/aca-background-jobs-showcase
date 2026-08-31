@@ -18,6 +18,9 @@
 @description('Azure region for all resources.')
 param location string = resourceGroup().location
 
+@description('Azure region for the SQL server/database. Defaults to `location`; override when the primary region has SQL capacity restrictions.')
+param sqlLocation string = location
+
 @description('Short prefix used to name resources (lowercase letters/numbers).')
 @minLength(3)
 @maxLength(12)
@@ -28,13 +31,6 @@ param acrName string
 
 @description('Container image tag to deploy (e.g. a git SHA or "latest").')
 param imageTag string = 'latest'
-
-@description('SQL administrator login (SQL auth, used for initial setup).')
-param sqlAdminLogin string = 'jobsadmin'
-
-@description('SQL administrator password (SQL auth).')
-@secure()
-param sqlAdminPassword string
 
 @description('Entra ID (AAD) admin login/display name for the SQL server.')
 param aadAdminLogin string
@@ -133,22 +129,23 @@ resource sbRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
 }
 
 // ---- Azure SQL (job state) ----------------------------------------------
+// Entra ID (AAD) only authentication — no SQL admin login/password. Passwordless
+// end to end, and required by MCAPS "Safe Secrets Standard" policy.
 resource sql 'Microsoft.Sql/servers@2023-08-01-preview' = {
   name: sqlServerName
-  location: location
+  location: sqlLocation
   tags: tags
   properties: {
-    administratorLogin: sqlAdminLogin
-    administratorLoginPassword: sqlAdminPassword
     version: '12.0'
     minimalTlsVersion: '1.2'
+    publicNetworkAccess: 'Enabled'
     administrators: {
       administratorType: 'ActiveDirectory'
       principalType: 'User'
       login: aadAdminLogin
       sid: aadAdminObjectId
       tenantId: tenant().tenantId
-      azureADOnlyAuthentication: false
+      azureADOnlyAuthentication: true
     }
   }
 }
@@ -156,7 +153,7 @@ resource sql 'Microsoft.Sql/servers@2023-08-01-preview' = {
 resource sqlDb 'Microsoft.Sql/servers/databases@2023-08-01-preview' = {
   parent: sql
   name: sqlDbName
-  location: location
+  location: sqlLocation
   tags: tags
   sku: { name: 'S0', tier: 'Standard' }
 }
@@ -278,7 +275,7 @@ resource dashboard 'Microsoft.App/containerApps@2024-03-01' = {
 
 // ---- Job: event-worker (KEDA Service Bus scaler) -------------------------
 // Fire-and-forget + delayed work. Scales from 0 based on queue depth.
-resource eventJob 'Microsoft.App/jobs@2024-03-01' = {
+resource eventJob 'Microsoft.App/jobs@2024-10-02-preview' = {
   name: '${namePrefix}-event-worker'
   location: location
   tags: tags
@@ -328,7 +325,7 @@ resource eventJob 'Microsoft.App/jobs@2024-03-01' = {
 
 // ---- Job: scheduled-worker (CRON) ----------------------------------------
 // Recurring work. CRON schedule lives on the platform, not an always-on server.
-resource scheduledJob 'Microsoft.App/jobs@2024-03-01' = {
+resource scheduledJob 'Microsoft.App/jobs@2024-10-02-preview' = {
   name: '${namePrefix}-scheduled-worker'
   location: location
   tags: tags
@@ -362,7 +359,7 @@ resource scheduledJob 'Microsoft.App/jobs@2024-03-01' = {
 
 // ---- Job: manual-worker (on-demand) --------------------------------------
 // Long-running batch started on demand (az containerapp job start ...).
-resource manualJob 'Microsoft.App/jobs@2024-03-01' = {
+resource manualJob 'Microsoft.App/jobs@2024-10-02-preview' = {
   name: '${namePrefix}-manual-worker'
   location: location
   tags: tags
